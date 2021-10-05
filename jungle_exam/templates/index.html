@@ -71,8 +71,8 @@
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="updateCard('${title}','${id}')">저장하기</button>
                                 </div>`
-                $('#card_body').empty().append(open_temp)
-                }
+                $('#' + id).empty().append(open_temp)
+            }
         }
 
         function updateCard(before_title, id) {
@@ -150,7 +150,7 @@
                         let id = ids[i]
                         let temp_html = `
                             <div class="card">
-                                <div class="card-body" id="card_body">
+                                <div class="card-body" id="${id}">
                                     <p class="card-title" id="${title}">${title}</p>
                                     <p class="card-text" id="${contents}">${contents}</p>
                                     <button type="button" class="btn btn-light" onclick="openCard('${title}', '${contents}', '${id}', ${i})">수정</button>
@@ -187,6 +187,7 @@
     </div>
     <div id="cards-box" class="card-columns">
     </div>
+</div>
 </div>
 </body>
 
