@@ -51,49 +51,61 @@
             border-radius: 5px;
         }
     </style>
-
     <script>
         $(document).ready(function () {
             showCard();
         });
 
-        function openCard(title, contents, id, i) {
-            let card_title = $('.card-title')[i]['id'];
-            let card_contents = $('.card-text')[i]['id'];
-            if (card_title == title) {
-                // $('#card_body').hide();
-                let open_temp = `<div class="card-update">
-                                    <div class="form-group">
-                                        <input id="update-title" class="form-control" value='${card_title}'>
-                                    </div>
-                                    <div class="form-group">
-                                        <textarea id="update-contents" class="form-control" rows="2">${card_contents}</textarea>
-                                    </div>
-                                    <button type="button" class="btn btn-primary" onclick="updateCard('${title}','${id}')">저장하기</button>
-                                </div>`
-                $('#card_body').empty().append(open_temp)
-                }
+        function openClose() {
+            if ($("#post-box").css("display") == "block") {
+                $("#post-box").hide();
+                $("#btn-post-box").text("포스팅 박스 열기");
+            } else {
+                $("#post-box").show();
+                $("#btn-post-box").text("포스팅 박스 닫기");
+            }
         }
 
-        function updateCard(before_title, id) {
-            let title = $('#update-title').val();
-            let contents = $('#update-contents').val();
 
+
+        function openCard(title, contents) {
             $.ajax({
-                type: "POST",
-                url: "/memo/update",
-                data: {
-                    title_before_give: before_title,
-                    title_give: title,
-                    contents_give: contents,
-                    id_give: id
-                },
-                success: function (response) { // 성공하면
-                    if (response["result"] == "success") {
-                        alert(response['msg'])
+                type: "GET",
+                url: "/memo/open?title_give=" + title,
+                data: {},
+                success: function (response) {
+                    let this_id = response['id']
+
+                    if ($("div.card-body").css("display") == "block") {
+                        $("div.card-body").hide()
+                        let changed_title = $('#card_title').val()
+                        let changed_contents = $('#card_contents').val()
+                        let update_temp = `<div class="card-update">
+                                                <div class="form-group">
+                                                    <input id="post-title" class="form-control" value='${title}'>
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea id="post-contents" class="form-control" rows="2">${contents}</textarea>
+                                                </div>
+                                                <button type="button" class="btn btn-primary" onClick="updateCard('${changed_title}', '${changed_contents}', '${this_id}')">저장하기</button>
+                                            </div>`
+                        $('div.card').append(update_temp)
+                    }
+                }
+            })
+        }
+
+        function updateCard(title, contents, id) {
+            $.ajax({
+                type: 'POST',
+                url: '/memo/update',
+                data: {title_give: title, contents_give: contents, id_give: id},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        console.log(title, contents)
+                        let msg = response['msg'];
+                        alert(msg);
                         window.location.reload();
-                    } else {
-                        alert("서버 오류!")
                     }
                 }
             })
@@ -143,21 +155,20 @@
                 data: {},
                 success: function (response) {
                     let memos = response['all_memos'];
-                    let ids = response['all_id'];
                     for (let i = 0; i < memos.length; i++) {
                         let title = memos[i]['title']
                         let contents = memos[i]['contents']
-                        let id = ids[i]
                         let temp_html = `
                             <div class="card">
-                                <div class="card-body" id="card_body">
-                                    <p class="card-title" id="${title}">${title}</p>
-                                    <p class="card-text" id="${contents}">${contents}</p>
-                                    <button type="button" class="btn btn-light" onclick="openCard('${title}', '${contents}', '${id}', ${i})">수정</button>
+                                <div class="card-body">
+                                    <p class="card-title" id="card_title">${title}</p>
+                                    <p class="card-text" id="card_contents">${contents}</p>
+                                    <button type="button" class="btn btn-light" onclick="openCard('${title}', '${contents}')">수정</button>
                                     <button type="button" class="btn btn-dark" onclick="deleteCard('${title}')">삭제</button>
                                 </div>
                             </div>`
                         $('#cards-box').append(temp_html)
+
                     }
                 }
             })
