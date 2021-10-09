@@ -60,7 +60,7 @@
         function openCard(title, contents, id, i) {
             let card_title = $('.card-title')[i]['id'];
             let card_contents = $('.card-text')[i]['id'];
-            if (card_title == title) {
+            if (card_title === title) {
                 // $('#card_body').hide();
                 let open_temp = `<div class="card-update">
                                     <div class="form-group">
@@ -101,8 +101,8 @@
 
         function deleteCard(title) {
             $.ajax({
-                type: 'POST',
-                url: '/memo/delete',
+                type: 'DELETE',
+                url: '/memo/124129481',
                 data: {title_give: title},
                 success: function (response) {
                     if (response['result'] == 'success') {
@@ -151,8 +151,8 @@
                         let temp_html = `
                             <div class="card">
                                 <div class="card-body" id="${id}">
-                                    <p class="card-title" id="${title}">${title}</p>
-                                    <p class="card-text" id="${contents}">${contents}</p>
+                                    <p class="card-title" id="${id}">${title}</p>
+                                    <p class="card-text" id="${id}">${contents}</p>
                                     <button type="button" class="btn btn-light" onclick="openCard('${title}', '${contents}', '${id}', ${i})">수정</button>
                                     <button type="button" class="btn btn-dark" onclick="deleteCard('${title}')">삭제</button>
                                 </div>
@@ -173,7 +173,7 @@
 
         <div class="top">
             <div class="form-group">
-                <input id="post-title" class="form-control" placeholder="메모 제목을 입력하세요">
+                <input id="post-title" class="form-control" placeholder="메모 제목을 입력하세요" >
             </div>
             <div class="form-group">
                 <textarea id="post-contents" class="form-control" rows="2" placeholder="내용을 입력하세요"></textarea>
@@ -187,7 +187,6 @@
     </div>
     <div id="cards-box" class="card-columns">
     </div>
-</div>
 </div>
 </body>
 
